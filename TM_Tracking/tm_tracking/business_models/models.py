@@ -2,13 +2,31 @@ from django.db import models
 
 # Create your models here.
 class Address(models.Model):
-    pass
+    country=models.CharField(max_length=30)
+    province=models.CharField(max_length=30)
+    city=models.CharField(max_length=30)
+    street=models.CharField(max_length=100)
+    zip=models.CharField(max_length=20)
 
 class Person(models.Model):
-    name=models.CharField(max_length=100)
+    name=models.CharField(max_length=50)
+    title=(
+        ('Mr.','Mr.'),
+        ('Ms.','Ms.')
+    )
+    addresses=models.ManyToManyField(Address)
+
 
 class Location(models.Model):
     name=models.CharField(max_length=100)
+    location_type=(
+        ('1','Plant'),
+        ('2','Warehouse')
+    )
+    longitude=models.DecimalField(max_digits=5,decimal_places=2,null=True)
+    latitude=models.DecimalField(max_digits=5,decimal_places=2,null=True)
+    address=models.ForeignKey(Address,on_delete=models.CASCADE)
+    
 class Cargo(models.Model):
     name=models.CharField(max_length=100)
 class Route(models.Model):
@@ -28,6 +46,17 @@ class BusinessPartner(models.Model):
     addresses=models.ManyToManyField(Address)
     admin=models.ForeignKey(Person,on_delete=models.CASCADE,related_name='admin')
     contacts=models.ManyToManyField(Person,related_name='contacts')
+
+
+
+class OrgUnit(models.Model):
+    name=models.CharField(max_length=50)
+    parent_org=models.ForeignKey('self',on_delete=models.CASCADE)
+    belong_to_bp=models.ForeignKey(BusinessPartner,on_delete=models.CASCADE)
+
+class User(Person):
+    belong_to_org=models.ForeignKey(OrgUnit,on_delete=models.CASCADE)
+
 class Order(models.Model):
     create_date=models.DateTimeField()
     status=(
