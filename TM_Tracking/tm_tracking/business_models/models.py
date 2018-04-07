@@ -37,12 +37,13 @@ class BusinessPartner(models.Model):
     short_name=models.CharField(max_length=10)
     legal_name=models.CharField(max_length=100)
     external_id=models.CharField(max_length=50)
-    status=(
+    STATUS=(
     ('CR', 'Created'),
     ('RG', 'Registered'),
     ('LK', 'Locked'),
     ('DL', 'Marked For Deletion'),
     )
+    status=models.CharField(max_length=2,choice=STATUS,default='CR')
     addresses=models.ManyToManyField(Address)
     admin=models.ForeignKey(Person,on_delete=models.CASCADE,related_name='admin')
     contacts=models.ManyToManyField(Person,related_name='contacts')
